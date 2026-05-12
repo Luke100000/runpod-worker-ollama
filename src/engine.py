@@ -1,5 +1,6 @@
 import json
 import os
+import subprocess
 
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -18,26 +19,23 @@ class OllamaEngine:
         print ("OllamaEngine initialized")
 
     async def generate(self, job_input):
-        # Get model from OLLAMA_MODEL_NAME defauting to llama3.2:1b
-        model = os.getenv("OLLAMA_MODEL_NAME", "llama3.2:1b")
-
         # Depending if prompt is a string or a list, we need to handle it differently and send it to the OpenAI API
         if isinstance(job_input.llm_input, str):
-            # Buid new JobInput object with the OpenAI route and input
+            # Build new JobInput object with the OpenAI route and input
             openAiJob = JobInput({
                 "openai_route": "/v1/completions",
                 "openai_input": {
-                    "model": model,
+                    "model": job_input.model,
                     "prompt": job_input.llm_input,
                     "stream": job_input.stream
                 }
             })
         else:
-            # Buid new JobInput object with the OpenAI route and input
+            # Build new JobInput object with the OpenAI route and input
             openAiJob = JobInput({
                 "openai_route": "/v1/chat/completions",
                 "openai_input": {
-                    "model": model,
+                    "model": job_input.model,
                     "messages": job_input.llm_input,
                     "stream": job_input.stream
                 }
@@ -45,7 +43,7 @@ class OllamaEngine:
 
         print ("Generating response for job_input:", job_input)
         print ("OpenAI job:", openAiJob)
-        
+
         # Create a generator that will yield the response from the OpenAI API
         openAIEngine = OllamaOpenAiEngine()
         generate = openAIEngine.generate(openAiJob)
@@ -81,12 +79,23 @@ class OllamaOpenAiEngine(OllamaEngine):
             response = client.models.list()
             # build a json response from the response object
             # SyncPage[Model](data=[Model(id='llama3.2:1b', created=1737206544, object='model', owned_by='library')], object='list')\n
-            yield {"object": "list", "data": [model.to_dict() for model in response.data]} 
+            yield {"object": "list", "data": [model.to_dict() for model in response.data]}
         except Exception as e:
             yield {"error": str(e)}
 
     async def _handle_chat_or_completion_request(self, openai_input, chat=False):
         try:
+            model = openai_input.get("model")
+            if model:
+                try:
+                    models_list = client.models.list()
+                    model_ids = [m.id for m in models_list.data]
+                    if model not in model_ids:
+                        print(f"Model {model} not found locally. Pulling...")
+                        subprocess.run(["ollama", "pull", model], check=True)
+                except Exception as e:
+                    print(f"Error checking/pulling model {model}: {e}")
+
             # Call openai.chat.completions.create or openai.completions.create based on the route
             if chat:
                 response = client.chat.completions.create(**openai_input)

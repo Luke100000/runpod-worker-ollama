@@ -2,16 +2,14 @@
 
 ## How to use
 
-Start a runpod serverless with the docker container ``svenbrnn/runpod-ollama:latest``. Set ``OLLAMA_MODEL_NAME`` environment to a model from ollama.com to automatically download a model.
+Start a runpod serverless with the docker container ``svenbrnn/runpod-ollama:latest``. Models are pulled automatically on-demand when requested in the API payload. 
 A mounted volume will be automatically used.
 
 [![RunPod](https://api.runpod.io/badge/SvenBrnn/runpod-worker-ollama)](https://www.runpod.io/console/hub/SvenBrnn/runpod-worker-ollama)
 
 ## Environment variables
 
-| Variable Name       | Description                              | Default Value       |
-|---------------------|------------------------------------------|---------------------|
-| `OLLAMA_MODEL_NAME` | The name of the model to download        | NULL                |
+No specific environment variables are required. Models will be downloaded on the first request if they are not already cached, using the `model` property specified in the API payload.
 
 ## Test requests for runpod.io console
 
@@ -22,9 +20,6 @@ See the [test_inputs](./test_inputs) directory for example test requests.
 
 Streaming for openai requests are fully working.
 
-## Preload model into the docker image
-
-See the [embed_model](./embed_model/) directory for instructions.
 
 ## Licence
 

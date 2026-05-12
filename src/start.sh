@@ -29,12 +29,5 @@ check_server_is_running() {
 while ! check_server_is_running; do
     sleep 5
 done
-# IF $MODEL_NAME is set, make sure to pull the model, else just skip
-if [ -z "$OLLAMA_MODEL_NAME" ]; then
-    echo "No model name provided. Skipping model pull..."
-else
-    echo "Pulling model $OLLAMA_MODEL_NAME..."
-    ollama pull $OLLAMA_MODEL_NAME
-fi
 
 python -u handler.py $1
