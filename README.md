@@ -1,5 +1,7 @@
 # Runpod serverless runner for ollama
 
+A fork of SvenBrnn's worker, but pulling models automatically on demand.
+
 ## How to use
 
 Start a runpod serverless with the docker container ``svenbrnn/runpod-ollama:latest``. Models are pulled automatically on-demand when requested in the API payload. 
