@@ -5,6 +5,10 @@ on:
     branches:
       - master
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   check-new-release:
     runs-on: ubuntu-latest
@@ -64,7 +68,7 @@ jobs:
                   suffix=$(echo "$custom_version_orig" | grep -o '[0-9]*$')
                   suffix="-$((suffix + 1))"
               fi
-              
+          
               echo "next_version_suffix=$suffix"
               echo "next_version_suffix=$suffix" >> $GITHUB_OUTPUT
           fi
