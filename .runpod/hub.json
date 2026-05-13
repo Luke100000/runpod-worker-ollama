@@ -12,16 +12,6 @@
     "presets": [],
     "env": [
       {
-        "key": "OLLAMA_MODEL_NAME",
-        "input": {
-          "name": "Model Name",
-          "type": "string",
-          "description": "Name of a model to preload",
-          "default": "phi3",
-          "advanced": false
-        }
-      },
-      {
         "key": "MAX_CONCURRENCY",
         "input": {
           "name": "Max Concurrency",
