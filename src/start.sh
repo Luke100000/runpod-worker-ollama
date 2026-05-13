@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 cleanup() {
@@ -30,4 +31,4 @@ while ! check_server_is_running; do
     sleep 5
 done
 
-python -u handler.py $1
+python -u handler.py "$@"

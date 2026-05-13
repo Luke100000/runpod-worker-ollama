@@ -88,9 +88,9 @@ class OllamaOpenAiEngine(OllamaEngine):
             model = openai_input.get("model")
             if model:
                 try:
-                    models_list = client.models.list()
-                    model_ids = [m.id for m in models_list.data]
-                    if model not in model_ids:
+                    # Use native ollama cli to check if model exists
+                    res = subprocess.run(["ollama", "show", model], capture_output=True, text=True)
+                    if res.returncode != 0:
                         print(f"Model {model} not found locally. Pulling...")
                         subprocess.run(["ollama", "pull", model], check=True)
                 except Exception as e:
